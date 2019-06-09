@@ -1,11 +1,13 @@
-import mongoose from 'mongoose'
-import bcrypt from 'bcrypt'
-import _ from 'lodash'
 
-import models from './models'
+import mongoose from 'mongoose'
+
+import _ from 'lodash'
+import AuthController from '../controllers/authController';
+const authController = new AuthController();
+
+import * as models from './models'
 import populateData from './data'
 
-const saltRounds = 10;
 const init = async (dbUrl) => {
   try {
 
@@ -17,7 +19,8 @@ const init = async (dbUrl) => {
 
     await mongoose.connect(dbUrl, {
       useNewUrlParser: true,
-      useCreateIndex: true
+      useCreateIndex: true,
+      useFindAndModify: false
     });
     console.log('Connected to mongoDB with mongoose!!');
 
@@ -29,15 +32,13 @@ const init = async (dbUrl) => {
     // Populate
     promises = _.map(populateData.users, async (user)=>{
       let {username,password,role} = user;
-      // encrypt password
-      let hash = await bcrypt.hash(password,saltRounds);
-      // save the user
-      const userInstance = new models.User({
+      let hash = await authController.encrypt(password);
+      await models.User.create({
         username,
         password:hash,
         role
       });
-      await userInstance.save();
+
     });
 
     await Promise.all(promises);
