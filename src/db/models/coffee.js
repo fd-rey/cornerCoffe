@@ -3,15 +3,19 @@ import mongoose from 'mongoose';
 const coffeeSchema = new mongoose.Schema({
   name: {
     type: String,
+    required: true
   },
   intensity: {
     type: Number,
+    required: true
   },
   price: {
-    type: mongoose.Decimal128,
+    type: Number,
+    required: true
   },
   stock: {
     type: Number,
+    required: true
   },
 });
 

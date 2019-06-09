@@ -1,13 +1,21 @@
 import mongoose from 'mongoose';
 
 const orderSchema = new mongoose.Schema({
-  user:   { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
-  coffee: { type: mongoose.Schema.Types.ObjectId, ref: 'Coffee' },
+  user:   {
+    type: mongoose.Schema.Types.ObjectId, ref: 'User',
+    required: true
+   },
+  coffee: {
+    type: mongoose.Schema.Types.ObjectId, ref: 'Coffee',
+    required: true
+  },
   amount: {
-    type: mongoose.Decimal128,
+    type: Number,
+    required: true
   },
   quantity: {
     type:   Number,
+    required: true
   },
 });
 
