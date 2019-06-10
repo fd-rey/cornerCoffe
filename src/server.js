@@ -25,12 +25,10 @@ let run = async() => {
     // parse application/json
     app.use(bodyParser.json())
     // jwt verification middleware
-    app.use(jwt({ secret: 'this_should_be_an_environment_variable'},
-      async (req,res)=>{
-        await authController.checkUser(req.user.id)
-      })
-      .unless({path: ['/api/login/']})
+    app.use(
+      jwt({ secret: 'this_should_be_an_environment_variable'}).unless({path: ['/api/login/']})
     )
+    app.use( authController.checkUser().unless({path: ['/api/login/']}) )
 
     // routes
     registerRoutes(app)

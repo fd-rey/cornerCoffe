@@ -1,6 +1,6 @@
 import "core-js/stable";
 import "regenerator-runtime/runtime";
-
+import unless from 'express-unless';
 import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
 import {User} from '../db/models'
@@ -41,10 +41,17 @@ export default class AuthController {
       return token;
 
     } catch (e) {
-      // console.error(e.message)
       throw e
     }
+  }
 
+  async isUsersEmpty(){
+    try {
+      let count = await User.count();
+      return count == 0
+    } catch (e) {
+      throw (e)
+    }
   }
 
   checkAdmin(user){
@@ -54,9 +61,19 @@ export default class AuthController {
       throw {status:403, message:`Forbidden`}
   }
 
-  async checkUser(userId){
-    let user = await User.findById(userId);
-    if(!user)
-      throw {status:500, message:`Invalid user`}
+  checkUser(){
+    let mid = async(req,res,next) => {
+      try {
+        let user = await User.findById(req.user.id);
+        if(!user)
+          throw {status:401, message:`Invalid user token`}
+        next()
+      } catch (e) {
+        next(e)
+      }
+    }
+    mid.unless = unless;
+    return mid;
+
   }
 }
