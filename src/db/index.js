@@ -22,24 +22,29 @@ const init = async (dbUrl) => {
       useFindAndModify: false
     });
     mainStory.info(namespace,'Connected');
+    let promises = []
 
     // Clean DB
-    let promises = _.map(models,(model)=>model.deleteMany({}));
-    await Promise.all(promises);
-    mainStory.info(namespace,'Cleaning completed');
+    // promises = _.map(models,(model)=>model.deleteMany({}));
+    // await Promise.all(promises);
+    // mainStory.info(namespace,'Cleaning completed');
 
-    // Populate
-    promises = _.map(populateData.users, async (user)=>{
-      let {username,password,role} = user;
-      let hash = await authController.encrypt(password);
-      await models.User.create({
-        username,
-        password:hash,
-        role
+    let createUsers = await authController.isUsersEmpty()
+    if(createUsers){
+      // Populate
+      promises = _.map(populateData.users, async (user)=>{
+        let {username,password,role} = user;
+        let hash = await authController.encrypt(password);
+        await models.User.create({
+          username,
+          password:hash,
+          role
+        });
+
       });
+      mainStory.info(namespace,'Population completed');
+    }
 
-    });
-    mainStory.info(namespace,'Population completed');
 
     await Promise.all(promises);
 
