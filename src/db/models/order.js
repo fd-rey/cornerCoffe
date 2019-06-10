@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 
-const orderSchema = new mongoose.Schema({
+const schema = new mongoose.Schema({
   user:   {
     type: mongoose.Schema.Types.ObjectId, ref: 'User',
     required: true
@@ -15,10 +15,22 @@ const orderSchema = new mongoose.Schema({
   },
   quantity: {
     type:   Number,
-    required: true
+    required: true,
+    validate : {
+      validator : Number.isInteger
+    }
   },
 });
-
-const Order = mongoose.model('Order', orderSchema);
+if (!schema.options.toObject) schema.options.toObject = {};
+schema.options.toObject.transform = function (doc, ret, options) {
+  delete ret._id
+  delete ret.__v
+  delete ret.user
+  delete ret.coffee
+  ret.userId = doc.user.toString()
+  ret.coffeeId = doc.coffee.toString()
+  return ret
+}
+const Order = mongoose.model('Order', schema);
 
 export default Order;
