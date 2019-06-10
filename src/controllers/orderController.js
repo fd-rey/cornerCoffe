@@ -1,13 +1,14 @@
+import { mainStory } from 'storyboard';
 import {Order} from '../db/models'
+import CoffeeController from '../controllers/coffeeController';
 
 export default class OrderController {
   constructor(){
-
+    this.name='orderController'
   }
   async findAll(){
     try {
       let result = await Order.find()
-        .lean()
         .populate('user','username')
         .populate('coffee','name price')
 
@@ -29,7 +30,18 @@ export default class OrderController {
   }
   async create(data){
     try {
+      const {coffee:coffeeId,quantity} = data
       let result = await Order.create(data);
+      const story = mainStory.child({
+        src: this.name,
+        title: `SET ORDER`,
+        level: 'INFO',
+      });
+      story.info(this.name,`order ${quantity} units of coffee`)
+      story.info(this.name,'Order',{attach:result.toObject()})
+      story.close()
+      const coffeeController = new CoffeeController();
+      await coffeeController.consume(coffeeId,quantity)
       return result;
     } catch (e) {
       throw e

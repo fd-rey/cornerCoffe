@@ -24,7 +24,6 @@ export default class AuthController {
     try {
       const {username,password} = login;
       const user = await User.findOne({username});
-      console.log(`user id: ${user.id}`);
       if(!user)
         throw {status:401, message:`Wrong username ${username}`};
       if(!user.role || (user.role != 'admin' && user.role != 'customer'))
@@ -53,5 +52,11 @@ export default class AuthController {
       throw {status:400, message:`Bad request`}
     if(user.role !== 'admin')
       throw {status:403, message:`Forbidden`}
+  }
+
+  async checkUser(userId){
+    let user = await User.findById(userId);
+    if(!user)
+      throw {status:500, message:`Invalid user`}
   }
 }

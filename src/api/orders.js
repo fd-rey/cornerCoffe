@@ -1,7 +1,10 @@
+import { mainStory } from 'storyboard';
 import OrderController from '../controllers/orderController';
 import AuthController from '../controllers/authController';
+import CoffeeController from '../controllers/coffeeController';
 const orderController = new OrderController();
 const authController = new AuthController();
+const coffeeController = new CoffeeController();
 
 export default (app) =>{
 
@@ -34,9 +37,27 @@ export default (app) =>{
 
   app.post('/api/orders/new', async(req,res,next)=>{
     try {
-      let out = {};
-      const data = req.body;
-      const result = await orderController.create(data);
+      let out = {}
+      const {coffee:coffeeId,quantity} = req.body
+      const user = req.user
+
+      if(!coffeeId || !quantity)
+        throw {status:400, message:'Bad request, missing required fields'}
+
+      const conditions = {_id:coffeeId, stock:{$gte:quantity}}
+      let coffee = await coffeeController.findOne(conditions);
+      if(!coffee){
+        throw {status:404, message:'ERROR SET ORDER -> OUT OF STOCK'}
+      }
+
+      const orderData={
+        user:user.id,
+        coffee:coffeeId,
+        quantity,
+        amount:quantity * coffee.price,
+      }
+      const result = await orderController.create(orderData)
+
       out={status:200,message:"Created",data:result}
       res.status(out.status)
       res.json(out);

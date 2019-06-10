@@ -6,23 +6,31 @@ import bodyParser from 'body-parser';
 import jwt from 'express-jwt';
 import registerRoutes from './api'
 import _ from 'lodash'
+import { mainStory} from 'storyboard';
+import 'storyboard-preset-console';
 
 import initDB from './db'
+import AuthController from './controllers/authController';
+const authController = new AuthController();
 
 const app = express()
-
+const namespace = 'server'
 //config
 const PORT = 8080;
 const DB_URL  = 'mongodb://mongo:27017/cornerCoffee'
 
 let run = async() => {
   try {
+    mainStory.info(namespace,'Starting...')
     // parse application/json
     app.use(bodyParser.json())
-
     // jwt verification middleware
-    app.use(jwt({ secret: 'this_should_be_an_environment_variable'})
-     .unless({path: ['/api/login/']}));
+    app.use(jwt({ secret: 'this_should_be_an_environment_variable'},
+      async (req,res)=>{
+        await authController.checkUser(req.user.id)
+      })
+      .unless({path: ['/api/login/']})
+    )
 
     // routes
     registerRoutes(app)
@@ -47,20 +55,17 @@ let run = async() => {
           }
         }
       }
-      console.error(e)
+      mainStory.error(namespace,'Error',{attach:e})
       res.status(out.status)
       res.json(out);
     });
 
-    await initDB(DB_URL);
-
-
-    // ready
+    await initDB(DB_URL, mainStory)
     app.listen(PORT);
-    console.log(`API listening on port ${PORT}`);
+    mainStory.info(namespace,`API listening on port ${PORT}`)
 
   } catch (e) {
-    console.error(e);
+    mainStory.fatal(namespace,'Crash: ',{attach:e});
   }
 }
 run();

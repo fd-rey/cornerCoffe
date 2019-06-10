@@ -1,8 +1,9 @@
+import { mainStory } from 'storyboard';
 import CoffeeController from '../controllers/coffeeController';
 import AuthController from '../controllers/authController';
 const coffeeController = new CoffeeController();
 const authController = new AuthController();
-
+const namespace = 'api/coffees'
 export default (app) =>{
 
   app.get('/api/coffees', async(req,res,next)=>{
