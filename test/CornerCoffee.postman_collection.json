@@ -1,0 +1,482 @@
+{
+	"info": {
+		"_postman_id": "69928233-d871-4c8e-af1c-03c34be94333",
+		"name": "CornerCoffee",
+		"description": "Example requests set used to manually test the web API.\n\nUsage: First, send an authenication request in order to obtain a token. The customer token has less privileges than the admin token.\n\nThen, send the obtained token in the Authorization header of the following requests.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Authentication",
+			"item": [
+				{
+					"name": "Login customer",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n \"username\":\"customer\",\n \"password\":\"customer\"\n}"
+						},
+						"url": {
+							"raw": "localhost:8080/api/login/",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"login",
+								""
+							]
+						},
+						"description": "This request returns a jwt with customer user permissions.\nUse it in the autorization header in order to test the other requests."
+					},
+					"response": []
+				},
+				{
+					"name": "Login admin",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n \"username\":\"admin\",\n \"password\":\"admin\"\n}"
+						},
+						"url": {
+							"raw": "localhost:8080/api/login/",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"login",
+								""
+							]
+						},
+						"description": "This request returns a jwt with admin permissions.\nUse it in the autorization header in order to test the other requests."
+					},
+					"response": []
+				}
+			],
+			"description": "Authentication requests. \nThis requests returns a json web token, the token is mandatory in the authentication header of the other API requests.",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "9bcb7f20-4b10-4be0-a2ee-6e5bd4eece6f",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "b74ca1cf-50d5-4206-ae65-2778fe94860f",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "Coffees",
+			"item": [
+				{
+					"name": "create",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVjZmQzZGVkYmRkOWY3MDY2MGEyZTYzMSIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTU2MDEwMzgwM30.Ujf34z0PlTgXBDXYjUbAmqOor0FwARH3XI155NY9VQs",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"name\":\"ristretto\",\n\t\"stock\":\"10\",\n\t\"price\":\"1.5\",\n\t\"intensity\":1\n}"
+						},
+						"url": {
+							"raw": "localhost:8080/api/coffees/new",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"coffees",
+								"new"
+							]
+						},
+						"description": "Add a new coffee to the database. Restricted to admins."
+					},
+					"response": []
+				},
+				{
+					"name": "update",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVjZmQzZGVkYmRkOWY3MDY2MGEyZTYzMSIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTU2MDEwNzkxM30.oSghDDG36YlXsS7nKqeS6a--KVdxdtilUlJpYzY5X4I",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"price\":1.25,\n\t\"stock\":9999999\n}"
+						},
+						"url": {
+							"raw": "localhost:8080/api/coffees/5cfe2900ff88d3006cfa5ffd",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"coffees",
+								"5cfe2900ff88d3006cfa5ffd"
+							]
+						},
+						"description": "Update a coffee in the database. Restricted to admins."
+					},
+					"response": []
+				},
+				{
+					"name": "delete",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVjZmQyZTRlOTEwZmRhMDM2MDMyMTY5NiIsInJvbGUiOiJjdXN0b21lciIsImlhdCI6MTU2MDA5NjU2Nn0.zYHOSkSbQKUJNEHqfh1xixheoR90dNPpVRvbx02Zr2M",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "localhost:8080/api/coffees/5cfd3e0dbdd9f70660a2e633",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"coffees",
+								"5cfd3e0dbdd9f70660a2e633"
+							]
+						},
+						"description": "Delete a coffee from database. Restricted to admins."
+					},
+					"response": []
+				},
+				{
+					"name": "list",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVjZmQyZTRlOTEwZmRhMDM2MDMyMTY5NiIsInJvbGUiOiJjdXN0b21lciIsImlhdCI6MTU2MDA5NjU2Nn0.zYHOSkSbQKUJNEHqfh1xixheoR90dNPpVRvbx02Zr2M",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							},
+							{
+								"key": "",
+								"value": "",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "localhost:8080/api/coffees/",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"coffees",
+								""
+							]
+						},
+						"description": "Get a list of all the coffees in the database."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Orders",
+			"item": [
+				{
+					"name": "create",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVjZmUyNzA4ZDY1NWIwMDAzMzE4NTg2MiIsInJvbGUiOiJjdXN0b21lciIsImlhdCI6MTU2MDE2MzU5Mn0.XxppmFcsbxQaxj6hXkStNREd1n9qrDH8mrQmBTHC84o",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"coffee\":\"5cfe57f93a9c6106a85d5ee9\",\n\t\"quantity\":1\n}"
+						},
+						"url": {
+							"raw": "localhost:8080/api/orders/new",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"orders",
+								"new"
+							]
+						},
+						"description": "Make a new order."
+					},
+					"response": []
+				},
+				{
+					"name": "update",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVjZmQyZTRlOTEwZmRhMDM2MDMyMTY5NiIsInJvbGUiOiJjdXN0b21lciIsImlhdCI6MTU2MDA5NjU2Nn0.zYHOSkSbQKUJNEHqfh1xixheoR90dNPpVRvbx02Zr2M",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"name\":\"espresso_updated\"\n}"
+						},
+						"url": {
+							"raw": "localhost:8080/api/coffees/5cfd46e9ffb3c0084e86788d",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"coffees",
+								"5cfd46e9ffb3c0084e86788d"
+							]
+						},
+						"description": "Upadate an already existing order. Restricted to admins."
+					},
+					"response": []
+				},
+				{
+					"name": "delete",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVjZmQyZTRlOTEwZmRhMDM2MDMyMTY5NiIsInJvbGUiOiJjdXN0b21lciIsImlhdCI6MTU2MDA5NjU2Nn0.zYHOSkSbQKUJNEHqfh1xixheoR90dNPpVRvbx02Zr2M",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "localhost:8080/api/coffees/5cfd3d4a35c2dc062cdca4c2",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"coffees",
+								"5cfd3d4a35c2dc062cdca4c2"
+							]
+						},
+						"description": "Delete an order from the database. Restricted to admins."
+					},
+					"response": []
+				},
+				{
+					"name": "list",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVjZmQzZGVkYmRkOWY3MDY2MGEyZTYzMSIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTU2MDEwNzkxM30.oSghDDG36YlXsS7nKqeS6a--KVdxdtilUlJpYzY5X4I",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "localhost:8080/api/orders/",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"orders",
+								""
+							]
+						},
+						"description": "Get a list of all the orders in the database."
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"id": "b95befac-7a96-420c-93c4-524a440c9d90",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"id": "2c586033-b317-41e5-930e-c38c52aa7ef0",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}
