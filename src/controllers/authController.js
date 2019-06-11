@@ -47,7 +47,7 @@ export default class AuthController {
 
   async isUsersEmpty(){
     try {
-      let count = await User.count();
+      let count = await User.countDocuments();
       return count == 0
     } catch (e) {
       throw (e)
